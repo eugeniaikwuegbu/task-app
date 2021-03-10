@@ -7,30 +7,30 @@ beforeEach(setUpDatabase)
 
 
 
-test('Should sign up a new user', async() => {
-   const response =  await supertest(app)
-    .post('/users')
-    .send({
-        name: 'Eugenia',
-        email : 'nenye@gmail.com',
-        password : 'hello1234'
-    })
-    .expect(201)
+// test('Should sign up a new user', async() => {
+//    const response =  await supertest(app)
+//     .post('/users')
+//     .send({
+//         name: 'Eugenia',
+//         email : 'nenye@gmail.com',
+//         password : 'hello1234'
+//     })
+//     .expect(201)
 
 // Assert that the database was changed correctly
- const user = await User.findById(response.body.user._id)
- expect(user).not.toBeNull()
+//  const user = await User.findById(response.body.user._id)
+//  expect(user).not.toBeNull()
 
 //Asertions for response
-expect(response.body).toMatchObject({
-        user: {
-            name: 'Eugenia',
-            email : 'nenye@gmail.com',
-        },
-        token: user.tokens[0].token
-    })
-expect(user.password).not.toBe('hello1234')
-})
+// expect(response.body).toMatchObject({
+//         user: {
+//             name: 'Eugenia',
+//             email : 'nenye@gmail.com',
+//         },
+//         token: user.tokens[0].token
+//     })
+// expect(user.password).not.toBe('hello1234')
+// })
 
 
 
@@ -56,13 +56,13 @@ test('Should not login non-existing user', async() => {
 })
 
 
-// test('Should get user profile', async() =>{
-//     await supertest(app)
-//     .get('/users/me')
-//     .set('Authorization',`Bearer ${userOne.tokens[0].token}`)
-//     .send()
-//     .expect(200)
-// })
+test('Should get user profile', async() =>{
+    await supertest(app)
+    .get('/users/me')
+    .set('Authorization',`Bearer ${userOne.tokens[0].token}`)
+    .send()
+    .expect(200)
+})
 
 test('Should not get profile for unauthenticated user', async() => {
     await supertest(app)
@@ -79,39 +79,39 @@ test('Should not get profile for unauthenticated user', async() => {
 //     .expect(200)
 // })
 
-// test('Should not delete account for unauthorized user', async() => {
-//     await supertest(app)
-//     .delete('/users/me')
-//     .send()
-//     .expect(401)
-//     const user = await User.findById(userOneId)
-//     expect(user).toBeNull()
-// })
+test('Should not delete account for unauthorized user', async() => {
+    await supertest(app)
+    .delete('/users/me')
+    .send()
+    .expect(401)
+    const user = await User.findById(userOneId)
+    expect(user).not.toBeNull()
+})
 
 
-// test('Should upload avatar image', async() => {
-//    await supertest(app) 
-//    .post('/users/me/avatar')
-//    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
-//    .attach('avatar', 'test/fixtures/profile-pic.jpg')
-//    .expect(200)
+test('Should upload avatar image', async() => {
+   await supertest(app) 
+   .post('/users/me/avatar')
+   .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+   .attach('avatar', 'test/fixtures/profile-pic.jpg')
+   .expect(200)
 
-//    const user = await User.findById(userOneId)
-//    expect(user.avatar).toEqual(expect.any(Buffer))
-// })
+   const user = await User.findById(userOneId)
+   expect(user.avatar).toEqual(expect.any(Buffer))
+})
 
 test('Should update valid user fields', async() => {
-   await supertest(app)
+    await supertest(app)
     .patch('/users/me')
     .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
     .send({
-        name: 'Chiemeka',
-        password: 'chi1234'
-    })
+            name: 'Chiemeka'
+        })
     .expect(200)
-    const user = User.findById(userOne)
+    const user = await User.findById(userOneId)
     expect(user.name).toEqual('Chiemeka')
 })
+
 
 test('Should not update invalid user fields', async() => {
     await supertest(app)

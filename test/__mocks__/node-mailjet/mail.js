@@ -1,3 +1,8 @@
 module.exports= {
-    
+  connect(){
+
+  },
+  post(){
+
+  }
 }
